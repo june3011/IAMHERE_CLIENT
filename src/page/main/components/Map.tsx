@@ -35,7 +35,7 @@ const Map = () => {
           myLocation.latitude,
           myLocation.longitude
         ),
-        zoomControl: true,
+        zoomControl: false,
       });
   }, [mapRef, myLocation]);
 

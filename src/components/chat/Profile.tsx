@@ -4,9 +4,13 @@ import React, { FC } from "react";
 interface Props {}
 
 const Profile: FC<Props> = () => {
-  return <div></div>;
+  return <SBox></SBox>;
 };
 
 export default Profile;
 
-const SBox = styled.div``;
+const SBox = styled.div`
+  width: 100%;
+  height: 70px;
+  background-color: gray;
+`;
