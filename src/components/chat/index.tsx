@@ -32,7 +32,7 @@ const Chat: FC<Props> = ({}) => {
   useEffect(() => {
     socket.on("chat-msg", (name, message) => {
       // 메세지 수신
-      setArrivalChat({ message, name });
+      setArrivalChat(message);
     });
   }, [socket]);
 
@@ -48,20 +48,52 @@ const Chat: FC<Props> = ({}) => {
   const profile =
     chatData?.data.user.profileImg ??
     "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460__340.png";
+
+  function speak(text: any, opt_prop: any) {
+    if (
+      typeof SpeechSynthesisUtterance === "undefined" ||
+      typeof window.speechSynthesis === "undefined"
+    ) {
+      alert("이 브라우저는 음성 합성을 지원하지 않습니다.");
+      return;
+    }
+
+    const prop = opt_prop || {};
+
+    const speechMsg = new SpeechSynthesisUtterance();
+    speechMsg.rate = prop.rate || 1; // 속도: 0.1 ~ 10
+    speechMsg.pitch = prop.pitch || 1; // 음높이: 0 ~ 2
+    speechMsg.lang = prop.lang || "ko-KR";
+    speechMsg.text = text;
+
+    window.speechSynthesis.speak(speechMsg);
+  }
+
+  const textRead = (title: string) => {
+    speak(title, {
+      rate: 1,
+      pitch: 0.8,
+    });
+  };
+
+  // const { listen, stop } = useSpeechRecognition({
+  //   onResult: (result) => {
+  //     setValue(result);
+  //   },
+  // });
+
   return (
     <SContainer>
-      <input type="text" onChange={(e) => setName(e.target.value)} />
       <STop>
         <img src={profile} alt="profile-image" />
         <div className="profile">
-          <p>
-            {chatData?.data.user.name} ({chatData?.data.user.age})
-          </p>
+          <p>기준 (19)</p>
+          <p>INFJ</p>
         </div>
       </STop>
       <SChatBox>
         {chat.map((chat: any) => (
-          <Bubble content={chat} />
+          <Bubble content={chat} textRead={textRead} />
         ))}
       </SChatBox>
       <SInput>
@@ -74,7 +106,7 @@ const Chat: FC<Props> = ({}) => {
             if (e.key === "Enter") onMessageSubmit(e);
           }}
         />
-        <img src={VoiceIcon} alt="" onClick={onMessageSubmit} />
+        <img src={VoiceIcon} alt="" onClick={() => listen()} />
         <img src={SendIcon} alt="" onClick={onMessageSubmit} />
       </SInput>
     </SContainer>

@@ -6,8 +6,11 @@ import { toast } from "react-toastify";
 import Profile from "./chat/Profile";
 import { chatListData } from "../contexts/chatList";
 import ChatRoomItem from "./chat/ChatRoomItem";
+import SignUpPage from "../page/sign/signup";
+import { Box } from "@mui/system";
 
 const SideBar = () => {
+  const [open, setOpen] = useState(false);
   const [keyword, setKeyWord] = useState("");
   const [selectValue, setSelectValue] = useState("ENFP");
 
@@ -30,6 +33,8 @@ const SideBar = () => {
 
   return (
     <>
+      {/* <SignIn open={} /> */}
+      <SignUpPage open={open} setOpen={setOpen} />
       <SContainer>
         <SBox>
           <SProfile>
@@ -40,14 +45,14 @@ const SideBar = () => {
               />
               <div className="profile-text">
                 <p>
-                  <span className="bold">asdf</span>
+                  <span className="bold">신짱구 </span>
                   <span>(19)</span>
                 </p>
-                <p>MBTI</p>
+                <p>ENFP</p>
               </div>
             </div>
-            <span className="logout" onClick={logout}>
-              로그아웃
+            <span className="logout" onClick={() => setOpen(true)}>
+              로그인
             </span>
           </SProfile>
           <SSearchBox>
@@ -57,13 +62,9 @@ const SideBar = () => {
               variant="filled"
               color="primary"
             />
-            <Select
-              onChange={(e) => setSelectValue(e.target.value)}
-              value={selectValue}
-              sx={{ display: "none" }}
-            >
+            <Select value={selectValue}>
               {MBTIList.map((item) => (
-                <MenuItem>{item}</MenuItem>
+                <MenuItem onClick={() => setSelectValue(item)}>{item}</MenuItem>
               ))}
             </Select>
 
