@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
-// import naver from "@types/navermaps";
+import styled from "@emotion/styled";
 
 const Map = () => {
   const mapRef = useRef<HTMLElement | null | any>(null);
@@ -39,7 +39,12 @@ const Map = () => {
       });
   }, [mapRef, myLocation]);
 
-  return <div id="map"></div>;
+  return <SContainer id="map"></SContainer>;
 };
 
 export default Map;
+
+const SContainer = styled.div`
+  width: 100%;
+  height: 100vh;
+`;
