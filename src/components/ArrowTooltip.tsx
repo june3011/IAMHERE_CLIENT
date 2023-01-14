@@ -5,13 +5,13 @@ const ArrowTooltip = styled(({ className, ...props }: TooltipProps) => (
   <Tooltip {...props} arrow classes={{ popper: className }} />
 ))(({ theme }) => ({
   [`& .${tooltipClasses.arrow}`]: {
-    color: "#000000",
+    color: "#ffffff",
   },
   [`& .${tooltipClasses.tooltip}`]: {
     marginTop: "16px !important",
     textAlign: "center",
     fontSize: "12px",
-    backgroundColor: "#000000",
+    backgroundColor: "#ffffff",
     fontFamily: "Poppins, sans-serif",
   },
 }));

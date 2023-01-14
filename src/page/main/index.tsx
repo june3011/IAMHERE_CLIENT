@@ -3,7 +3,11 @@ import styled from "@emotion/styled";
 
 import Chat from "../../components/chat";
 import Map from "./components/Map";
+
+import Register from "../../components/register/Register";
+
 import SideBar from "../../components/SideBar";
+
 
 const Main = () => {
   return (
@@ -11,6 +15,7 @@ const Main = () => {
       <SideBar />
       <Map />
       <Chat />
+      <Register />
     </SContainer>
   );
 };
