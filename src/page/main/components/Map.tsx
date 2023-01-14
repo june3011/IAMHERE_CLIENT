@@ -6,6 +6,7 @@ import { Tooltip } from "@mui/material";
 
 const Map = () => {
   const mapRef = useRef<HTMLElement | null | any>(null);
+  const markerRef = useRef<any>(null);
 
   const [markerHover, setMarkerHover] = useState<boolean>(false);
 
@@ -61,8 +62,8 @@ const Map = () => {
   }, [myLocation]);
 
   useEffect(() => {
-    const handleMarker = (item: any) => {
-      const marker = new naver.maps.Marker({
+    comunities.map((item: any) => {
+      markerRef.current = new naver.maps.Marker({
         position: new naver.maps.LatLng(item.latitude, item.longitude),
         map: mapRef.current,
 
@@ -76,36 +77,15 @@ const Map = () => {
           anchor: new naver.maps.Point(19, 58),
         },
       });
-    };
 
-    const handleHoverState = () => {
-      setMarkerHover((prev) => !prev);
-    };
-
-    comunities.map((item: any) => {
-      function markerClickEvent(marker: any, item: any) {
-        naver.maps.Event.addListener(marker, "click", (e: any) => {
-          const latLng = new naver.maps.LatLng(
-            Number(item.latitude),
-            Number(item.longitude)
-          );
-          // 클릭한 마커로 마커로 부드럽게 이동
-          mapRef.current.panTo(latLng, e?.coord);
-        });
-      }
-      // markerClickEvent(marker, item);
-      return (
-        <Tooltip
-          disableFocusListener
-          open={markerHover}
-          onClose={handleHoverState}
-          onOpen={handleHoverState}
-          title="asdfasdf"
-          placement="left-start"
-        >
-          <>{handleMarker(item)}</>
-        </Tooltip>
-      );
+      naver.maps.Event.addListener(markerRef.current, "click", (e: any) => {
+        const latLng = new naver.maps.LatLng(
+          Number(item.latitude),
+          Number(item.longitude)
+        );
+        // 클릭한 마커로 마커로 부드럽게 이동
+        mapRef.current.panTo(latLng, e?.coord);
+      });
     });
   }, [comunities]);
 
