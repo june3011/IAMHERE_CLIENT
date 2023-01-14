@@ -17,6 +17,8 @@ const Map = () => {
     | string
   >("");
 
+  // const selectedMarker = useRef<any | null>(null);
+
   const comunities = [
     { latitude: 37.4979517, longitude: 127.0276138 },
     { latitude: 37.4449517, longitude: 127.0276318 },
@@ -60,7 +62,7 @@ const Map = () => {
 
   useEffect(() => {
     const handleMarker = (item: any) => {
-      new naver.maps.Marker({
+      const marker = new naver.maps.Marker({
         position: new naver.maps.LatLng(item.latitude, item.longitude),
         map: mapRef.current,
 
@@ -81,6 +83,17 @@ const Map = () => {
     };
 
     comunities.map((item: any) => {
+      function markerClickEvent(marker: any, item: any) {
+        naver.maps.Event.addListener(marker, "click", (e: any) => {
+          const latLng = new naver.maps.LatLng(
+            Number(item.latitude),
+            Number(item.longitude)
+          );
+          // 클릭한 마커로 마커로 부드럽게 이동
+          mapRef.current.panTo(latLng, e?.coord);
+        });
+      }
+      // markerClickEvent(marker, item);
       return (
         <Tooltip
           disableFocusListener
