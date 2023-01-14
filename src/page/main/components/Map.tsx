@@ -1,12 +1,32 @@
 import React, { useEffect, useRef, useState } from "react";
 import styled from "@emotion/styled";
+import MarkerHtml from "./marker";
+import ArrowTooltip from "../../../components/ArrowTooltip";
+import { Tooltip } from "@mui/material";
 
 const Map = () => {
   const mapRef = useRef<HTMLElement | null | any>(null);
 
+  const [markerHover, setMarkerHover] = useState<boolean>(false);
+
   const [myLocation, setMyLocation] = useState<
-    { latitude: number; longitude: number } | string
+    | {
+        latitude: number;
+        longitude: number;
+      }
+    | string
   >("");
+
+  // const selectedMarker = useRef<any | null>(null);
+
+  const comunities = [
+    { latitude: 37.4979517, longitude: 127.0276138 },
+    { latitude: 37.4449517, longitude: 127.0276318 },
+    { latitude: 37.4979517, longitude: 127.0273338 },
+    { latitude: 37.4319517, longitude: 127.0273218 },
+    { latitude: 37.4971117, longitude: 127.0276088 },
+    { latitude: 37.4979417, longitude: 127.0276188 },
+  ];
 
   //현재 위치를 추적합니다.
   useEffect(() => {
@@ -29,22 +49,139 @@ const Map = () => {
   }, []);
 
   useEffect(() => {
-    if (typeof myLocation !== "string")
+    if (typeof myLocation !== "string") {
       mapRef.current = new naver.maps.Map("map", {
         center: new naver.maps.LatLng(
           myLocation.latitude,
           myLocation.longitude
         ),
-        zoomControl: true,
+        zoomControl: false,
       });
-  }, [mapRef, myLocation]);
+    }
+  }, [myLocation]);
 
-  return <SContainer id="map"></SContainer>;
+  useEffect(() => {
+    const handleMarker = (item: any) => {
+      const marker = new naver.maps.Marker({
+        position: new naver.maps.LatLng(item.latitude, item.longitude),
+        map: mapRef.current,
+
+        icon: {
+          content: MarkerHtml(
+            markerHover,
+            "https://item.kakaocdn.net/do/30cef086c8778d80e1487385bd5efe7b8f324a0b9c48f77dbce3a43bd11ce785",
+            "다들 어디?! 오늘 나랑 수다 떨어줄 사람 심심해요 ㅠㅠ ㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜ"
+          ),
+          size: new naver.maps.Size(38, 58),
+          anchor: new naver.maps.Point(19, 58),
+        },
+      });
+    };
+
+    const handleHoverState = () => {
+      setMarkerHover((prev) => !prev);
+    };
+
+    comunities.map((item: any) => {
+      function markerClickEvent(marker: any, item: any) {
+        naver.maps.Event.addListener(marker, "click", (e: any) => {
+          const latLng = new naver.maps.LatLng(
+            Number(item.latitude),
+            Number(item.longitude)
+          );
+          // 클릭한 마커로 마커로 부드럽게 이동
+          mapRef.current.panTo(latLng, e?.coord);
+        });
+      }
+      // markerClickEvent(marker, item);
+      return (
+        <Tooltip
+          disableFocusListener
+          open={markerHover}
+          onClose={handleHoverState}
+          onOpen={handleHoverState}
+          title="asdfasdf"
+          placement="left-start"
+        >
+          <>{handleMarker(item)}</>
+        </Tooltip>
+      );
+    });
+  }, [comunities]);
+
+  return (
+    <SContainer markerState={markerHover} ref={mapRef} id="map"></SContainer>
+  );
 };
 
 export default Map;
 
-const SContainer = styled.div`
+const SContainer = styled.div<{ markerState: boolean }>`
   width: 100%;
   height: 100vh;
+
+  #marker-wrap {
+    display: flex;
+    align-items: center;
+    width: auto;
+    height: 80px;
+    position: relative;
+
+    &:hover {
+      #tooltip {
+        opacity: 1;
+      }
+    }
+
+    #tooltip {
+      opacity: 0;
+      width: 275px;
+      height: 430px;
+      background-color: #ffffff;
+      border-radius: 20px;
+      z-index: 3;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      align-items: center;
+      /* gap: 10px; */
+      padding-bottom: 10px;
+    }
+  }
+
+  #img-circle {
+    position: absolute;
+    left: 11.3%;
+    bottom: 30%;
+    transform: translate(-50%, -10%);
+    width: 40px;
+    height: 40px;
+    border-radius: 50px;
+
+    &:hover {
+      background-color: blue;
+    }
+  }
+
+  #tooltip-profile-img {
+    display: flex;
+    width: 100%;
+    height: 300px;
+    background-color: white;
+    border-radius: 20px 20px 0 0;
+    background-color: black;
+  }
+
+  #tooltip-content {
+    display: flex;
+    height: 35px;
+    font-size: 13px;
+    align-items: center;
+    padding: 5px 10px;
+  }
+
+  #messege-start {
+    width: 60px;
+    height: 60px;
+  }
 `;
