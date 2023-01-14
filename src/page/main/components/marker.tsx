@@ -1,4 +1,10 @@
-const MarkerHtml = (hoverState: boolean, url: string, content: string) => `   
+const MarkerHtml = (
+  hoverState: boolean,
+  url: string,
+  memo: string,
+  mbti: string,
+  name: string
+) => `   
     <div id="marker-wrap">
     <div>
       <img src="/assets/marker-bg.svg">
@@ -7,7 +13,9 @@ const MarkerHtml = (hoverState: boolean, url: string, content: string) => `
     
         <div id="tooltip">
             <img id="tooltip-profile-img" src=${url}>
-            <div id="tooltip-content">${content}</div>
+            <div id="tooltip-content">${name}</div>
+            <div id="tooltip-content">${mbti}</div>
+            <div id="tooltip-content">${memo}</div>
             <img id="messege-start" src="/assets/chat_btn.svg">
         </div>
     </div>
