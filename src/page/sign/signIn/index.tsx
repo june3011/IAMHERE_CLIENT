@@ -1,18 +1,22 @@
+import { Modal, TextField } from "@mui/material";
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import * as S from "../style";
+import banner from "/assets/banner.png";
 
-const SignPage = () => {
-  const navi = useNavigate();
+interface Props {
+  open: boolean;
+  setOpen: (v: boolean) => void;
+}
 
+const SignIn = ({ open, setOpen }: Props) => {
   const [inputs, setInpust] = useState({
     name: "",
-    email: "",
+    password: "",
   });
-
   const [name, setName] = useState<boolean>(false);
-  const [email, setEmail] = useState<boolean>(false);
+  const [password, setPassword] = useState<boolean>(false);
 
   const onChangeHandler = (e: any) => {
     const { name, value } = e.target;
@@ -25,45 +29,45 @@ const SignPage = () => {
 
   useEffect(() => {
     inputs.name.length > 0 ? setName(true) : setName(false);
-    inputs.email.length > 0 ? setEmail(true) : setEmail(false);
+    inputs.password.length > 0 ? setPassword(true) : setPassword(false);
   }, [inputs]);
 
   const local = () => {
-    localStorage.setItem("userName", inputs.name);
-    toast("로그인에 성공했습니다.");
+    toast("회원가입에 성공했습니다.");
+
     setTimeout(() => {
-      navi("/");
+      setOpen(false);
     }, 2000);
   };
 
   return (
-    <S.SignWrapper>
+    <Modal open={open} onClose={() => setOpen(false)}>
       <S.SignBox>
-        <img src="/assets/Logo.svg" alt="logo" />
+        <img src={banner} alt="logo" style={{ width: "80%" }} />
         <div className="input-box">
-          <div className="test"></div>
           <S.NameInput
             border={name}
             type="text"
-            placeholder="이름"
+            placeholder="닉네임"
             name="name"
             value={inputs.name}
             onChange={(e) => onChangeHandler(e)}
           />
           <S.NameInput
-            border={email}
+            border={password}
             type="text"
-            placeholder="이메일"
-            name="email"
-            value={inputs.email}
+            placeholder="비밀번호"
+            name="password"
+            value={inputs.password}
             onChange={(e) => onChangeHandler(e)}
           />
         </div>
+
         <button onClick={local}>로그인</button>
-        <a href="/signup">아직 회원이 아니신가요?</a>
+        <a href="/signin">계정이 없으신가요?</a>
       </S.SignBox>
-    </S.SignWrapper>
+    </Modal>
   );
 };
 
-export default SignPage;
+export default SignIn;

@@ -4,11 +4,12 @@ import axios from "axios";
 
 interface Props {
   content: string;
+  textRead: (title: string) => void;
 }
 
-const Bubble: FC<Props> = ({ content }) => {
+const Bubble: FC<Props> = ({ content, textRead }) => {
   return (
-    <BubbleBox isMine={true}>
+    <BubbleBox isMine={true} onClick={() => textRead(content)}>
       <div className="bubble">{content}</div>
     </BubbleBox>
   );

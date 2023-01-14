@@ -4,20 +4,21 @@ interface Props {
   border: boolean;
 }
 
-export const SignWrapper = styled.div`
-  margin: 0 auto;
-  width: 100%;
-  height: 100vh;
-  display: flex;
-  align-items: center;
-`;
-
 export const SignBox = styled.div`
+  padding: 20px;
+  box-sizing: border-box;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
   margin: 0 auto;
   display: flex;
   flex-direction: column;
   align-items: center;
-  width: 250px;
+  width: 400px;
+  height: 500px;
+  background-color: white;
+  border-radius: 10px;
 
   img {
     margin-bottom: 20px;

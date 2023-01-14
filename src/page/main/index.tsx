@@ -8,7 +8,6 @@ import Register from "../../components/register/Register";
 
 import SideBar from "../../components/SideBar";
 
-
 const Main = () => {
   return (
     <SContainer>
