@@ -17,7 +17,9 @@ const Bubble: FC<Props> = ({ content }) => {
 export default Bubble;
 
 const BubbleBox = styled.div<{ isMine: boolean }>`
-  position: absolute;
+  /* position: absolute; */
+  position: relative;
+  width: fit-content;
   right: ${({ isMine }) => isMine && 0};
   left: ${({ isMine }) => !isMine && 0};
 

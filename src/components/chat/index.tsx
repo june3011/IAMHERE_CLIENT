@@ -1,104 +1,56 @@
 import React, { FC, useEffect, useState } from "react";
 import styled from "@emotion/styled";
+import { useLocation } from "react-router-dom";
 import { useSpeechRecognition } from "react-speech-recognition";
 import io from "socket.io-client";
 
 import SendIcon from "/assets/send.png";
+import VoiceIcon from "/assets/voice.png";
 
 import { useGetChatRoom, UserDto } from "../../services/user";
 import Bubble from "./Bubble";
-import { useLocation } from "react-router-dom";
 
-const socket = io("localhost:3001");
+const socket = io("localhost:4000");
 
 interface Props {}
 
 const Chat: FC<Props> = ({}) => {
   const { data: chatData } = useGetChatRoom(1);
-
-  const location = useLocation();
-  const [chats, setChats] = useState<any>([{}]);
-  const [isConnected, setIsConnected] = useState(socket.connected);
-  const [message, setMessage] = useState<string>("");
-
-  const addChatMessage = (data: any) => {
-    console.log(data);
-
-    let message = "";
-    if (data.numUsers === 1) {
-      message += `there's 1 participant`;
-    } else {
-      message += `there are ${data.numUsers} participants`;
-    }
-    setChats(chats.concat(message));
-  };
+  const [state, setState] = useState<any>({ name: "", message: "" });
+  const [arrivalChat, setArrivalChat] = useState<any>(null);
+  const [name, setName] = useState("");
+  const [chat, setChat] = useState<any>([]);
 
   useEffect(() => {
-    socket.emit("add user", "testuser");
+    socket.emit("joinRoom", name);
+  }, []);
 
-    socket.on("login", (data) => {
-      setIsConnected(true);
-      addChatMessage(data);
-    });
-    socket.on("user joined", (data) => {
-      setChats(chats.concat(`${data.username} joined`));
-    });
-    socket.on("user left", (data) => {
-      setChats(chats.concat(`${data.username} left`));
-    });
-    socket.on("disconnect", () => {
-      setIsConnected(false);
-    });
-    socket.on("new message", (data) => {
-      setChats(chats.concat(`${data.username} : ${data.message}`));
-    });
-    return () => {
-      socket.off("login");
-      socket.off("disconnect");
-      socket.off("new message");
-    };
-  });
+  useEffect(() => {
+    arrivalChat && setChat((prev: any) => [...prev, arrivalChat]); // 채팅 리스트에 추가
+  }, [arrivalChat]);
 
-  const sendMessage = () => {
-    console.log(message, chats);
-    setChats(chats.concat(`test nickname : ${message}`));
-    socket.emit("new message", message);
-    setMessage("");
+  useEffect(() => {
+    socket.on("chat-msg", (name, message) => {
+      // 메세지 수신
+      setArrivalChat({ message, name });
+    });
+  }, [socket]);
+
+  const onMessageSubmit = (e: any) => {
+    e.preventDefault();
+    const { message } = state;
+
+    socket.emit("chat-msg", name, message);
+
+    setState({ message: "" });
   };
-
-  // useEffect(() => {
-  //   if (!chatData) return;
-  // }, [chatData]);
-
-  // useEffect(() => {
-  //   socket.on("connect", () => {
-  //     setIsConnected(true);
-  //   });
-
-  //   socket.on("disconnect", () => {
-  //     setIsConnected(false);
-  //   });
-
-  //   socket.on("pong", () => {
-  //     setLastPong(new Date().toISOString());
-  //   });
-
-  //   return () => {
-  //     socket.off("connect");
-  //     socket.off("disconnect");
-  //     socket.off("pong");
-  //   };
-  // }, []);
-
-  // const sendPing = () => {
-  //   socket.emit("ping");
-  // };
 
   const profile =
     chatData?.data.user.profileImg ??
     "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460__340.png";
   return (
     <SContainer>
+      <input type="text" onChange={(e) => setName(e.target.value)} />
       <STop>
         <img src={profile} alt="profile-image" />
         <div className="profile">
@@ -108,7 +60,7 @@ const Chat: FC<Props> = ({}) => {
         </div>
       </STop>
       <SChatBox>
-        {chats.map((chat: any) => (
+        {chat.map((chat: any) => (
           <Bubble content={chat} />
         ))}
       </SChatBox>
@@ -116,13 +68,14 @@ const Chat: FC<Props> = ({}) => {
         <input
           type="text"
           placeholder="친구랑 이야기 해보세요."
-          value={message}
-          onChange={(e) => setMessage(e.target.value)}
+          value={state.message}
+          onChange={(e) => setState({ ...state, message: e.target.value })}
           onKeyPress={(e) => {
-            if (e.key === "Enter") sendMessage();
+            if (e.key === "Enter") onMessageSubmit(e);
           }}
         />
-        <img src={SendIcon} alt="" onClick={sendMessage} />
+        <img src={VoiceIcon} alt="" onClick={onMessageSubmit} />
+        <img src={SendIcon} alt="" onClick={onMessageSubmit} />
       </SInput>
     </SContainer>
   );
@@ -161,12 +114,13 @@ const STop = styled.div`
 `;
 
 const SChatBox = styled.div`
+  position: relative;
   margin: 20px 0;
   width: 100%;
   height: 100%;
   display: flex;
   flex-direction: column;
-  position: relative;
+  gap: 10px;
 `;
 
 const SInput = styled.div`

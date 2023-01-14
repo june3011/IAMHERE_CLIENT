@@ -4,9 +4,10 @@ import { Chip, MenuItem, Modal, Select } from "@mui/material";
 import { toast } from "react-toastify";
 
 import Profile from "./chat/Profile";
+import { chatListData } from "../contexts/chatList";
+import ChatRoomItem from "./chat/ChatRoomItem";
 
 const SideBar = () => {
-  const [open, setOpen] = useState(true);
   const [keyword, setKeyWord] = useState("");
   const [selectValue, setSelectValue] = useState("ENFP");
 
@@ -29,7 +30,6 @@ const SideBar = () => {
 
   return (
     <>
-      {/* <Modal /> */}
       <SContainer>
         <SBox>
           <SProfile>
@@ -73,12 +73,12 @@ const SideBar = () => {
               onChange={(e) => setKeyWord(e.target.value)}
             />
           </SSearchBox>
+          <SList>
+            {chatListData.map((item) => (
+              <ChatRoomItem chat={item} />
+            ))}
+          </SList>
         </SBox>
-        <SList>
-          {/* {testasdf.map((item) => (
-            <ChatRoomItem />
-        ))} */}
-        </SList>
       </SContainer>
     </>
   );
