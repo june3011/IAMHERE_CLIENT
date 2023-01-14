@@ -60,6 +60,13 @@ const Map = () => {
       new naver.maps.Marker({
         position: new naver.maps.LatLng(item.latitude, item.longitude),
         map: mapRef.current,
+        icon: {
+          content: MarkerHtml(
+            "https://item.kakaocdn.net/do/30cef086c8778d80e1487385bd5efe7b8f324a0b9c48f77dbce3a43bd11ce785"
+          ),
+          size: new naver.maps.Size(38, 58),
+          anchor: new naver.maps.Point(19, 58),
+        },
       });
     });
   }, [comunities]);
@@ -72,4 +79,21 @@ export default Map;
 const SContainer = styled.div`
   width: 100%;
   height: 100vh;
+
+  #marker-wrap {
+    display: flex;
+    align-items: center;
+    width: 80px;
+    height: 80px;
+    position: relative;
+  }
+
+  #img-circle {
+    position: absolute;
+    left: 50%;
+    transform: translate(-50%, -10%);
+    width: 40px;
+    height: 40px;
+    border-radius: 50px;
+  }
 `;
